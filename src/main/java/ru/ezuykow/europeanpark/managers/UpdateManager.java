@@ -1,7 +1,7 @@
 package ru.ezuykow.europeanpark.managers;
 
-import com.pengrad.telegrambot.model.Update;
 import org.springframework.stereotype.Component;
+import ru.ezuykow.europeanpark.models.ExtendedUpdate;
 
 /**
  * @author ezuykow
@@ -9,7 +9,17 @@ import org.springframework.stereotype.Component;
 @Component
 public class UpdateManager {
 
-    public void performUpdate(Update update) {
+    public void performUpdate(ExtendedUpdate update) {
+        if (update.hasMessageText()) {
+            performUpdateWithMessageText(update);
+        }
+        //TODO Если нет текста
+    }
 
+    private void performUpdateWithMessageText(ExtendedUpdate update) {
+        if (update.isCommand()) {
+
+        }
+        //TODO Если не команда
     }
 }

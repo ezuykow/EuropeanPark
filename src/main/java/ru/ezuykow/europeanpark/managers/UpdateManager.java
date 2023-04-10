@@ -1,6 +1,7 @@
 package ru.ezuykow.europeanpark.managers;
 
 import org.springframework.stereotype.Component;
+import ru.ezuykow.europeanpark.commands.CommandManager;
 import ru.ezuykow.europeanpark.models.ExtendedUpdate;
 
 /**
@@ -9,17 +10,33 @@ import ru.ezuykow.europeanpark.models.ExtendedUpdate;
 @Component
 public class UpdateManager {
 
-    public void performUpdate(ExtendedUpdate update) {
-        if (update.hasMessageText()) {
-            performUpdateWithMessageText(update);
-        }
-        //TODO Если нет текста
+    public enum UpdateType {
+        COMMAND,
+        SIMPLE_MESSAGE,
+        UNKNOWN
     }
 
-    private void performUpdateWithMessageText(ExtendedUpdate update) {
-        if (update.isCommand()) {
+    private final CommandManager commandManager;
 
+    public UpdateManager(CommandManager commandManager) {
+        this.commandManager = commandManager;
+    }
+
+    public void performUpdate(ExtendedUpdate update) {
+        switch (getUpdateType(update)) {
+            case COMMAND -> commandManager.performCommand(update);
+            case SIMPLE_MESSAGE -> {}//TODO;
         }
-        //TODO Если не команда
+    }
+
+    private UpdateType getUpdateType(ExtendedUpdate update) {
+        if (update.hasMessageText()) {
+            if (update.isCommand()) {
+                return UpdateType.COMMAND;
+            }
+            return UpdateType.SIMPLE_MESSAGE;
+        }
+        //TODO Если нет текста
+        return UpdateType.UNKNOWN;
     }
 }
